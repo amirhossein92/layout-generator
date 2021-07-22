@@ -5,10 +5,10 @@ const RenderLayoutItem = ({ type, option }) => {
     case "CHART_B":
       return <div>CHART_B</div>;
     case "WIDGET":
-      return <div>CHART_B</div>;
+      return <div>WIDGETTTTT</div>;
 
     default:
-      return <div>NOTHING</div>;
+      return <div>NO TYPE PROVIDED</div>;
   }
 };
 

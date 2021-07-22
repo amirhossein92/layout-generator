@@ -12,9 +12,9 @@ import "./LayoutGrid.css";
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 const widgetItems = [
-  { option: { amir: "b" }, type: "CHART_A", w: 1, h: 1 },
-  { option: { nompe: "b" }, type: "Box zzz", w: 2, h: 2 },
-  { option: {}, type: "Box a", w: 1, h: 1 },
+  { option: { data: "b" }, type: "CHART_A", w: 1, h: 1 },
+  { option: { res: "b" }, type: "CHART_B", w: 2, h: 2 },
+  { option: {}, type: "WIDGET", w: 1, h: 1 },
 ];
 
 const LayoutGrid = () => {
@@ -149,11 +149,8 @@ const LayoutGrid = () => {
         isResizable={isEditing}
         onDrop={handleDrop}
         droppingItem={getDroppingItem()}
-        // preventCollision={true}
-        // isBounded={true}
         onLayoutChange={handleLayoutChange}
         onBreakpointChange={handleBreakpointChange}
-        width={pageWidth * 0.9}
       >
         {memoizedItems()}
       </ResponsiveReactGridLayout>
