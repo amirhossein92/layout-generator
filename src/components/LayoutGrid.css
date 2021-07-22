@@ -1,5 +1,14 @@
 .layout-grid {
 }
+.layout-grid__widget-items {
+  margin-bottom: 20px;
+  border: 1px solid skyblue;
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+}
+.layout-grid__layouts-wrapper {
+}
 .react-grid-layout {
   min-height: 8rem;
 }

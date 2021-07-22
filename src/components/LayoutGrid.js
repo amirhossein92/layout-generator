@@ -11,13 +11,7 @@ import "./LayoutGrid.css";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
-const widgetItems = [
-  { option: { data: "b" }, type: "CHART_A", w: 1, h: 1 },
-  { option: { res: "b" }, type: "CHART_B", w: 2, h: 2 },
-  { option: {}, type: "WIDGET", w: 1, h: 1 },
-];
-
-const LayoutGrid = () => {
+const LayoutGrid = ({ widgetItems }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [layouts, setLayouts] = useState({ lg: [] });
   const [currentWidgetItem, setCurrentWidgetItem] = useState(null);
@@ -123,15 +117,7 @@ const LayoutGrid = () => {
       </div>
       <button onClick={onSave}>SAVE</button>
       <button onClick={onLoad}>LOAD</button>
-      <div
-        style={{
-          marginBottom: 20,
-          border: "1px solid skyblue",
-          padding: 20,
-          display: "flex",
-          flexWrap: "wrap",
-        }}
-      >
+      <div className="layout-grid__widget-items">
         {widgetItems.map((item) => (
           <WidgetItem
             key={item.type}
@@ -141,7 +127,7 @@ const LayoutGrid = () => {
         ))}
       </div>
       <ResponsiveReactGridLayout
-        className="layout"
+        className="layout-grid__layouts-wrapper"
         rowHeight={pageWidth / 12}
         layouts={layouts}
         isDroppable={true}
