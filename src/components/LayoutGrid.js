@@ -47,6 +47,7 @@ const LayoutGrid = ({ widgetItems }) => {
     };
     Object.keys(newLayouts).map((size) => {
       newLayouts[size] = bfs(newLayouts[size], newItem);
+      return null;
     });
     setLayouts(newLayouts);
     setNextId(uuidv4());
@@ -83,6 +84,7 @@ const LayoutGrid = ({ widgetItems }) => {
         const original = layouts[size] || layouts.lg;
         return { ...original[index], ...item };
       });
+      return null;
     });
 
     setLayouts(newLayouts);
