@@ -111,6 +111,10 @@ const LayoutGrid = ({ widgetItems }) => {
     setLayouts(newLayouts);
   };
 
+  const getWrapperStyle = () => ({
+    backgroundSize: `${pageWidth / 12}px ${pageWidth / 12}px`,
+  });
+
   return (
     <div className="layout-grid">
       <div style={{ marginBottom: 10 }}>
@@ -130,6 +134,7 @@ const LayoutGrid = ({ widgetItems }) => {
       </div>
       <ResponsiveReactGridLayout
         className="layout-grid__layouts-wrapper"
+        style={getWrapperStyle()}
         rowHeight={pageWidth / 12}
         layouts={layouts}
         isDroppable={true}
