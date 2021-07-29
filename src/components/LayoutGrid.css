@@ -12,15 +12,10 @@
   flex-direction: column;
   overflow: auto;
   flex-grow: 1;
-
-  background-color: #ccc;
 }
-.layout-grid__layouts-wrapper {
+.layout-grid__grids {
   flex-grow: 1;
   min-height: 100rem !important;
-}
-.react-grid-layout {
-  min-height: 8rem;
 }
 
 .react-grid-item {

@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import React, { useState } from "react";
 
 import { memoize, cloneDeep } from "lodash";
@@ -7,7 +8,6 @@ import { SizeMe } from "react-sizeme";
 
 import { bfs } from "../helper/dragHelper";
 import WidgetItem from "./WidgetItem";
-import LayoutGridItem from "./LayoutGridItem";
 
 import "./LayoutGrid.css";
 
@@ -16,7 +16,14 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const breakpointRules = { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 };
 const colRules = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 };
 
-const LayoutGrid = ({ widgetItems, isEditing, gridItemMargin = 10 }) => {
+const LayoutGrid = ({
+  widgetItems,
+  isEditable = true,
+  editingGridColor = "#cccccc80",
+  gridItemMargin = 10,
+  renderView,
+  renderEdit,
+}) => {
   const [layouts, setLayouts] = useState({
     lg: [],
     md: [],
@@ -32,14 +39,43 @@ const LayoutGrid = ({ widgetItems, isEditing, gridItemMargin = 10 }) => {
   const resolver = () =>
     JSON.stringify({
       layouts: layouts,
-      isEditing: isEditing,
+      isEditable: isEditable,
       breakpoint: currentBreakpoint,
     });
+
+  const onDeleteById = (id) => {
+    setLayouts({
+      ...layouts,
+      [currentBreakpoint]: layouts[currentBreakpoint].filter((q) => q.i !== id),
+    });
+  };
+
+  const onUpdateById = (id, key, value) => {
+    const layout = layouts[currentBreakpoint].find((q) => q.i === id);
+    if (!layout) return;
+    layout[key] = value;
+
+    setLayouts({
+      ...layouts,
+      [currentBreakpoint]: layouts[currentBreakpoint]
+        .filter((q) => q.i !== id)
+        .concat(layout),
+    });
+  };
 
   const memoizedItems = memoize(() => {
     return layouts[currentBreakpoint].map(({ i, type, option, ...rest }) => (
       <div key={i} data-grid={{ i, type, option, ...rest }}>
-        <LayoutGridItem type={type} option={option} />
+        {isEditable
+          ? renderEdit({
+              type,
+              option,
+              id: i,
+              onDeleteById,
+              onUpdateById,
+              ...rest,
+            })
+          : renderView({ type, option, id: i, ...rest })}
       </div>
     ));
   }, resolver);
@@ -127,7 +163,9 @@ const LayoutGrid = ({ widgetItems, isEditing, gridItemMargin = 10 }) => {
     backgroundSize: `${gridItemWidth(size) + gridItemMargin}px ${
       gridItemHeight(size) + gridItemMargin
     }px`,
-    backgroundImage: `linear-gradient(
+    backgroundImage: !isEditable
+      ? "none"
+      : `linear-gradient(
       90deg,
       rgba(var(--palette-neutral-0, 255, 255, 255), 1) 0,
       rgba(var(--palette-neutral-0, 255, 255, 255), 1) ${gridItemMargin}px,
@@ -159,15 +197,20 @@ const LayoutGrid = ({ widgetItems, isEditing, gridItemMargin = 10 }) => {
       <SizeMe>
         {({ size }) => (
           <>
-            <div className="layout-grid__wrapper">
+            <div
+              className="layout-grid__wrapper"
+              style={{
+                backgroundColor: editingGridColor,
+              }}
+            >
               <ResponsiveReactGridLayout
-                className="layout-grid__layouts-wrapper"
+                className="layout-grid__grids"
                 style={getWrapperStyle(size)}
                 rowHeight={gridItemHeight(size)}
                 layouts={layouts}
-                isDroppable={true}
-                isDraggable={isEditing}
-                isResizable={isEditing}
+                isDroppable={isEditable}
+                isDraggable={isEditable}
+                isResizable={isEditable}
                 onDrop={handleDrop}
                 droppingItem={getDroppingItem()}
                 onLayoutChange={handleLayoutChange}
@@ -185,6 +228,11 @@ const LayoutGrid = ({ widgetItems, isEditing, gridItemMargin = 10 }) => {
       </SizeMe>
     </div>
   );
+};
+
+LayoutGrid.propTypes = {
+  renderView: PropTypes.func.isRequired,
+  renderEdit: PropTypes.func.isRequired,
 };
 
 export default LayoutGrid;
