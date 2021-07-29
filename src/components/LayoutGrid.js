@@ -225,8 +225,14 @@ const LayoutGrid = ({
 };
 
 LayoutGrid.propTypes = {
+  isEditable: PropTypes.bool,
+  editingGridColor: PropTypes.string,
+  gridItemMargin: PropTypes.number,
   renderView: PropTypes.func.isRequired,
   renderEdit: PropTypes.func.isRequired,
+  renderDraggableItems: PropTypes.func,
+  onChange: PropTypes.func,
+  initialLayouts: PropTypes.array,
 };
 
 export default LayoutGrid;
