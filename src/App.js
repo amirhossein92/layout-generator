@@ -16,7 +16,22 @@ function App() {
   ];
   const [isEditable, setIsEditable] = useState(true);
 
-  const handleDragStart = () => {};
+  const [initialLayouts, setInitialLayouts] = useState({});
+  const [tempLayouts, setTempLayouts] = useState({});
+
+  const onLayoutChanged = (newLayouts) => {
+    setTempLayouts(newLayouts);
+  };
+
+  const onSave = () => {
+    localStorage.setItem("layouts", JSON.stringify({ layouts: tempLayouts }));
+  };
+
+  const onLoad = () => {
+    const newLayouts = JSON.parse(localStorage.getItem("layouts")).layouts;
+    setInitialLayouts(newLayouts);
+  };
+
   return (
     <div className="App">
       <input
@@ -27,18 +42,11 @@ function App() {
         onChange={(e) => setIsEditable(e.target.checked)}
       />
       <label for="editable">Is Editable</label>
-      <div className="layout-grid__widget-items">
-        {widgetItems.map((item) => (
-          <WidgetItem
-            key={item.type}
-            widgetItem={item}
-            onDragStart={(e) => handleDragStart(item, e)}
-          />
-        ))}
-      </div>
+      <button onClick={onSave}>SAVE</button>
+      <button onClick={onLoad}>LOAD</button>
+
       <LayoutGrid
         isEditable={isEditable}
-        widgetItems={widgetItems}
         renderEdit={({ type, onUpdateById, onDeleteById, id, option }) => (
           <div>
             {type}
@@ -52,7 +60,22 @@ function App() {
         renderView={({ type, option }) => (
           <LayoutGridItem type={type} option={option} />
         )}
-      />
+        renderDraggableItems={(handleDragStart) => (
+          <div className="layout-grid__widget-items">
+            {widgetItems.map((item) => (
+              <WidgetItem
+                key={item.type}
+                widgetItem={item}
+                onDragStart={(e) => handleDragStart(item, e)}
+              />
+            ))}
+          </div>
+        )}
+        onChange={onLayoutChanged}
+        initialLayouts={initialLayouts}
+      >
+        <span>Will be added here</span>
+      </LayoutGrid>
     </div>
   );
 }

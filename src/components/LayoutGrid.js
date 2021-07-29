@@ -1,13 +1,12 @@
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import { memoize, cloneDeep } from "lodash";
+import { memoize, cloneDeep, isEmpty } from "lodash";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import { v4 as uuidv4 } from "uuid";
 import { SizeMe } from "react-sizeme";
 
 import { bfs } from "../helper/dragHelper";
-import WidgetItem from "./WidgetItem";
 
 import "./LayoutGrid.css";
 
@@ -17,12 +16,15 @@ const breakpointRules = { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 };
 const colRules = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 };
 
 const LayoutGrid = ({
-  widgetItems,
   isEditable = true,
   editingGridColor = "#cccccc80",
   gridItemMargin = 10,
   renderView,
   renderEdit,
+  renderDraggableItems,
+  children,
+  onChange,
+  initialLayouts,
 }) => {
   const [layouts, setLayouts] = useState({
     lg: [],
@@ -31,6 +33,13 @@ const LayoutGrid = ({
     xs: [],
     xxs: [],
   });
+  useEffect(() => {
+    onChange && onChange(layouts);
+  }, [onChange, layouts]);
+
+  useEffect(() => {
+    !isEmpty(initialLayouts) && setLayouts(initialLayouts);
+  }, [initialLayouts]);
   const [currentWidgetItem, setCurrentWidgetItem] = useState(null);
   const [currentBreakpoint, setCurrentBreakpoint] = useState("lg");
   const [nextId, setNextId] = useState(uuidv4());
@@ -149,15 +158,6 @@ const LayoutGrid = ({
     );
   };
 
-  const onSave = () => {
-    localStorage.setItem("layouts", JSON.stringify({ layouts }));
-  };
-
-  const onLoad = () => {
-    const newLayouts = JSON.parse(localStorage.getItem("layouts")).layouts;
-    setLayouts(newLayouts);
-  };
-
   const getWrapperStyle = (size) => ({
     backgroundPosition: `0 ${gridItemMargin}px`,
     backgroundSize: `${gridItemWidth(size) + gridItemMargin}px ${
@@ -182,51 +182,45 @@ const LayoutGrid = ({
   });
 
   return (
-    <div className="layout-grid">
-      <button onClick={onSave}>SAVE</button>
-      <button onClick={onLoad}>LOAD</button>
-      <div className="layout-grid__widget-items">
-        {widgetItems.map((item) => (
-          <WidgetItem
-            key={item.type}
-            widgetItem={item}
-            onDragStart={(e) => handleDragStart(item, e)}
-          />
-        ))}
-      </div>
-      <SizeMe>
-        {({ size }) => (
-          <>
-            <div
-              className="layout-grid__wrapper"
-              style={{
-                backgroundColor: editingGridColor,
-              }}
-            >
-              <ResponsiveReactGridLayout
-                className="layout-grid__grids"
-                style={getWrapperStyle(size)}
-                rowHeight={gridItemHeight(size)}
-                layouts={layouts}
-                isDroppable={isEditable}
-                isDraggable={isEditable}
-                isResizable={isEditable}
-                onDrop={handleDrop}
-                droppingItem={getDroppingItem()}
-                onLayoutChange={handleLayoutChange}
-                onBreakpointChange={handleBreakpointChange}
-                breakpoints={breakpointRules}
-                cols={colRules}
-                width={size.width}
-                margin={[gridItemMargin, gridItemMargin]}
+    <>
+      {renderDraggableItems && renderDraggableItems(handleDragStart)}
+      <div className="layout-grid">
+        {children}
+
+        <SizeMe>
+          {({ size }) => (
+            <>
+              <div
+                className="layout-grid__wrapper"
+                style={{
+                  backgroundColor: editingGridColor,
+                }}
               >
-                {memoizedItems()}
-              </ResponsiveReactGridLayout>
-            </div>
-          </>
-        )}
-      </SizeMe>
-    </div>
+                <ResponsiveReactGridLayout
+                  className="layout-grid__grids"
+                  style={getWrapperStyle(size)}
+                  rowHeight={gridItemHeight(size)}
+                  layouts={layouts}
+                  isDroppable={isEditable}
+                  isDraggable={isEditable}
+                  isResizable={isEditable}
+                  onDrop={handleDrop}
+                  droppingItem={getDroppingItem()}
+                  onLayoutChange={handleLayoutChange}
+                  onBreakpointChange={handleBreakpointChange}
+                  breakpoints={breakpointRules}
+                  cols={colRules}
+                  width={size.width}
+                  margin={[gridItemMargin, gridItemMargin]}
+                >
+                  {memoizedItems()}
+                </ResponsiveReactGridLayout>
+              </div>
+            </>
+          )}
+        </SizeMe>
+      </div>
+    </>
   );
 };
 
