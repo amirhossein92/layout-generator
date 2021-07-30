@@ -2,6 +2,23 @@
   "name": "react-layout-generator",
   "version": "0.1.0",
   "private": false,
+  "description": "React drag & drop components based on react-grid-layout",
+  "author": "Amirhossein Mehrabi",
+  "keywords": [
+    "react",
+    "components",
+    "ui"
+  ],
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amirhossein92/layout-generator"
+  },
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
     "@babel/preset-react": "^7.14.5",
