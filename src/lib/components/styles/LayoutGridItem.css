@@ -1,0 +1,24 @@
+.layout-grid-item {
+  width: 100%;
+  height: 100%;
+}
+.chart-a {
+  background-color: #cd0abc80;
+  width: 100%;
+  height: 100%;
+}
+.chart-b {
+  background-color: #8cdabc80;
+  width: 100%;
+  height: 100%;
+}
+.chart-c {
+  background-color: #0c00bc80;
+  width: 100%;
+  height: 100%;
+}
+.chart-none {
+  background-color: #00880080;
+  width: 100%;
+  height: 100%;
+}

@@ -1,4 +1,4 @@
-import "./LayoutGridItem.css";
+import "./styles/LayoutGridItem.css";
 
 const LayoutGridItem = ({ type, option }) => {
   const renderChildren = (type) => {
