@@ -4,9 +4,9 @@ import "react-resizable/css/styles.css";
 
 import { useState } from "react";
 
-import LayoutGrid from "./components/LayoutGrid";
-import LayoutGridItem from "./components/LayoutGridItem";
-import WidgetItem from "./components/WidgetItem";
+import LayoutGrid from "./lib/components/LayoutGrid";
+import LayoutGridItem from "./lib/components/LayoutGridItem";
+import WidgetItem from "./lib/components/WidgetItem";
 
 function App() {
   const widgetItems = [

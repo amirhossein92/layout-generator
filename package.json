@@ -1,8 +1,27 @@
 {
-  "name": "layout-generator",
+  "name": "react-layout-generator",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "description": "React drag & drop components based on react-grid-layout",
+  "author": "Amirhossein Mehrabi",
+  "keywords": [
+    "react",
+    "components",
+    "ui"
+  ],
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amirhossein92/layout-generator"
+  },
   "dependencies": {
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-react": "^7.14.5",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -17,7 +36,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "rm -rf dist && NODE_ENV=production babel src/lib --out-dir dist --copy-files",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -38,5 +57,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.14.8",
+    "@babel/core": "^7.14.8",
+    "@babel/preset-env": "^7.14.8"
   }
 }
