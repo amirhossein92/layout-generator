@@ -6,7 +6,7 @@ import { Responsive, WidthProvider } from "react-grid-layout";
 import { v4 as uuidv4 } from "uuid";
 import { SizeMe } from "react-sizeme";
 
-import { bfs } from "../helper/dragHelper";
+import { bfs } from "./helper/dragHelper";
 
 import "./styles/LayoutGrid.css";
 
