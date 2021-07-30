@@ -1,5 +1,5 @@
 {
-  "name": "react-layout-generator",
+  "name": "react-layout-grid-generator",
   "version": "0.1.0",
   "private": false,
   "description": "React drag & drop components based on react-grid-layout",
