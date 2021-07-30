@@ -1,12 +1,12 @@
-import "./App.css";
-import "react-grid-layout/css/styles.css";
-import "react-resizable/css/styles.css";
-
 import { useState } from "react";
 
 import LayoutGrid from "./lib/components/LayoutGrid";
 import LayoutGridItem from "./lib/components/LayoutGridItem";
 import WidgetItem from "./lib/components/WidgetItem";
+
+import "./App.css";
+import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
 
 function App() {
   const widgetItems = [
