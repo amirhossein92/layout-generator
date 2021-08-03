@@ -1,10 +1,10 @@
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 
-import { memoize, cloneDeep, isEmpty } from "lodash";
+import { memoize, cloneDeep, isEmpty, orderBy } from "lodash";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import { v4 as uuidv4 } from "uuid";
-import { SizeMe } from "react-sizeme";
+import { withSize } from "react-sizeme";
 
 import { bfs } from "./helper/dragHelper";
 
@@ -12,11 +12,26 @@ import "./styles/LayoutGrid.css";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
-const breakpointRules = { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 };
-const colRules = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 };
+const getInitialBreakpoint = ({ rules, width }) => {
+  let result = "lg";
+
+  const breakpointArray = [];
+  for (const breakpointRule in rules) {
+    if (Object.hasOwnProperty.call(rules, breakpointRule)) {
+      const minWidth = rules[breakpointRule];
+      breakpointArray.push({ rule: breakpointRule, minWidth });
+    }
+  }
+
+  orderBy(breakpointArray, (q) => q.minWidth, ["asc"]).forEach((q) => {
+    if (width > q.minWidth) result = q.rule;
+  });
+
+  return result;
+};
 
 const LayoutGrid = ({
-  isEditable = true,
+  isEditable,
   editingGridColor = "#cccccc80",
   gridItemMargin = 10,
   renderView,
@@ -25,6 +40,9 @@ const LayoutGrid = ({
   children,
   onChange,
   initialLayouts,
+  breakpointRules,
+  colRules,
+  size,
 }) => {
   const [layouts, setLayouts] = useState({
     lg: [],
@@ -41,7 +59,12 @@ const LayoutGrid = ({
     !isEmpty(initialLayouts) && setLayouts(initialLayouts);
   }, [initialLayouts]);
   const [currentWidgetItem, setCurrentWidgetItem] = useState(null);
-  const [currentBreakpoint, setCurrentBreakpoint] = useState("lg");
+  const [currentBreakpoint, setCurrentBreakpoint] = useState(
+    getInitialBreakpoint({
+      width: size?.width,
+      rules: breakpointRules,
+    })
+  );
   const [nextId, setNextId] = useState(uuidv4());
   const [dropping, setDropping] = useState(false);
 
@@ -187,38 +210,32 @@ const LayoutGrid = ({
       <div className="layout-grid">
         {children}
 
-        <SizeMe>
-          {({ size }) => (
-            <>
-              <div
-                className="layout-grid__wrapper"
-                style={{
-                  backgroundColor: editingGridColor,
-                }}
-              >
-                <ResponsiveReactGridLayout
-                  className="layout-grid__grids"
-                  style={getWrapperStyle(size)}
-                  rowHeight={gridItemHeight(size)}
-                  layouts={layouts}
-                  isDroppable={isEditable}
-                  isDraggable={isEditable}
-                  isResizable={isEditable}
-                  onDrop={handleDrop}
-                  droppingItem={getDroppingItem()}
-                  onLayoutChange={handleLayoutChange}
-                  onBreakpointChange={handleBreakpointChange}
-                  breakpoints={breakpointRules}
-                  cols={colRules}
-                  width={size.width}
-                  margin={[gridItemMargin, gridItemMargin]}
-                >
-                  {memoizedItems()}
-                </ResponsiveReactGridLayout>
-              </div>
-            </>
-          )}
-        </SizeMe>
+        <div
+          className="layout-grid__wrapper"
+          style={{
+            backgroundColor: editingGridColor,
+          }}
+        >
+          <ResponsiveReactGridLayout
+            className="layout-grid__grids"
+            style={getWrapperStyle(size)}
+            rowHeight={gridItemHeight(size)}
+            layouts={layouts}
+            isDroppable={isEditable}
+            isDraggable={isEditable}
+            isResizable={isEditable}
+            onDrop={handleDrop}
+            droppingItem={getDroppingItem()}
+            onLayoutChange={handleLayoutChange}
+            onBreakpointChange={handleBreakpointChange}
+            breakpoints={breakpointRules}
+            cols={colRules}
+            width={size.width}
+            margin={[gridItemMargin, gridItemMargin]}
+          >
+            {memoizedItems()}
+          </ResponsiveReactGridLayout>
+        </div>
       </div>
     </>
   );
@@ -232,7 +249,32 @@ LayoutGrid.propTypes = {
   renderEdit: PropTypes.func.isRequired,
   renderDraggableItems: PropTypes.func,
   onChange: PropTypes.func,
-  initialLayouts: PropTypes.array,
+  initialLayouts: PropTypes.shape({
+    lg: PropTypes.object,
+    md: PropTypes.object,
+    sm: PropTypes.object,
+    xs: PropTypes.object,
+    xxs: PropTypes.object,
+  }),
+  breakpointRules: PropTypes.shape({
+    lg: PropTypes.number,
+    md: PropTypes.number,
+    sm: PropTypes.number,
+    xs: PropTypes.number,
+    xxs: PropTypes.number,
+  }),
+  colRules: PropTypes.shape({
+    lg: PropTypes.number,
+    md: PropTypes.number,
+    sm: PropTypes.number,
+    xs: PropTypes.number,
+    xxs: PropTypes.number,
+  }),
 };
 
-export default LayoutGrid;
+LayoutGrid.defaultProps = {
+  colRules: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
+  breakpointRules: { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 },
+};
+
+export default withSize({ refreshMode: "debounce" })(LayoutGrid);

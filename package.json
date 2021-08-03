@@ -1,13 +1,15 @@
 {
   "name": "react-layout-grid-generator",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": false,
   "description": "React drag & drop components based on react-grid-layout",
   "author": "Amirhossein Mehrabi",
   "keywords": [
     "react",
     "components",
-    "ui"
+    "ui",
+    "drag",
+    "layout"
   ],
   "main": "dist/index.js",
   "module": "dist/index.js",
